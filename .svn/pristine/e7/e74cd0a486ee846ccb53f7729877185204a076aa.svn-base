@@ -1,0 +1,54 @@
+package draw;
+
+import java.awt.Color;
+import java.awt.Shape;
+
+/**
+ * Represents a drawn shape, characterized by its shape, color, and thickness.
+ * @author Erica Putsche
+ * @version 05/17/2013
+ */
+public class DrawnShape {
+  /**
+   * The shape.
+   */
+  private final Shape my_shape; 
+  
+  /**
+   * The color.
+   */
+  private final Color my_color;
+  
+  /**
+   * The thickness.
+   */
+  private final float my_stroke;
+  
+  /** 
+   * A constructor for a DrawnShape.
+   * @param the_shape The shape.
+   * @param the_color The color. 
+   * @param the_stroke The thickness.
+   */
+  public DrawnShape(final Shape the_shape, final Color the_color, final float the_stroke) {
+    my_shape = the_shape; 
+    my_color = the_color; 
+    my_stroke = the_stroke;
+  }
+  
+  /**
+   * Gets the shape.
+   * @return The shape.
+   */
+  public Shape getShape() {
+    return my_shape;
+  }
+  
+  /**
+   * Gets the color.
+   * @return The color.
+   */
+  public Color getColor() {
+    return my_color;
+  }
+}

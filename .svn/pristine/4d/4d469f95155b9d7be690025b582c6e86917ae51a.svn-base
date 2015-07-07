@@ -1,0 +1,16 @@
+package tools;
+
+import java.awt.event.MouseEvent;
+
+public class Pencil extends AbstractTool {
+
+  @Override 
+  public void mouseDragged(final MouseEvent the_event) {
+    
+  }
+  
+  @Override 
+  public void mouseReleased(final MouseEvent the_event) {
+    
+  }
+}

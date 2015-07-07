@@ -1,0 +1,7 @@
+package tools;
+
+public class Pencil extends AbstractTool {
+  public Pencil() {
+    
+  }
+}

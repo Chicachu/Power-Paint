@@ -1,0 +1,58 @@
+/*
+ * Abstract2DTool.java
+ * TCSS 305 - Assignment 5 Part B 
+ */
+package tools;
+
+import java.awt.Shape;
+import java.awt.event.MouseEvent;
+import draw.DrawnShape;
+
+/**
+ * @author Erica Putsche 
+ * @version 05/15/2013
+ */
+public abstract class Abstract2DTool extends AbstractTool {
+  private final double my_x1 = super.getPoint1().getX();
+  private final double my_x2 = super.getPoint2().getX();
+  private final double my_y1 = super.getPoint1().getY();
+  private final double my_y2 = super.getPoint2().getY();
+  private final double my_width = Math.abs(my_x1 - my_x2);
+  private final double my_height = Math.abs(my_y1 - my_y2);
+  
+  @Override
+  public void mouseDragged(final MouseEvent the_event) {
+    super.mouseDragged(the_event);
+    getPanel().setTemp(drawShape());
+    getPanel().repaint();
+  }
+  
+  @Override
+  public void mouseReleased(final MouseEvent the_event) {
+    super.mouseReleased(the_event);
+    getPanel().add(drawShape());
+    getPanel().repaint();
+  }
+  
+  protected abstract Shape buildShape(final double the_x, final double the_y, 
+                           final double the_width, final double the_height);
+  
+  private DrawnShape drawShape() {
+ // fourth quadrant rectangle
+    Shape shape = buildShape(my_x1, my_y1, my_width, my_height);
+    
+    // first quadrant rectangle
+    if (my_x1 - my_x2 <= 0 && my_y1 - my_y2 >= 0) {
+      shape = buildShape(my_x1, my_y2, my_width, my_height);
+    } 
+    // second
+    if (my_x1 - my_x2 >= 0 && my_y1 - my_y2 >= 0) {
+      shape = buildShape(my_x2, my_y2, my_width, my_height);
+    }
+    // third
+    if (my_x1 - my_x2 >= 0 && my_y1 - my_y2 <= 0) {
+      shape = buildShape(my_x2, my_y1, my_width, my_height);
+    }
+    return new DrawnShape(shape, getPanel().getColor(), getPanel().getThickness());
+  }
+}

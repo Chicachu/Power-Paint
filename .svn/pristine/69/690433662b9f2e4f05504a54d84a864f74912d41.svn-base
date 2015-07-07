@@ -1,0 +1,18 @@
+package tools;
+
+import java.awt.Shape;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
+
+import javax.tools.Tool;
+
+import draw.DrawnShape;
+
+public class Ellipse extends Abstract2DTool {
+  protected Ellipse2D.Double buildShape(final double the_x, final double the_y, 
+                                          final double the_width, final double the_height) {
+    return new Ellipse2D.Double(the_x, the_y, the_width, the_height);
+  }
+}
+

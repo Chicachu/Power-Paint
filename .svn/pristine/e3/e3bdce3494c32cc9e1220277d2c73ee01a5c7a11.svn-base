@@ -1,0 +1,94 @@
+package draw;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JPanel;
+
+import tools.AbstractTool;
+
+public class DrawingPanel extends JPanel {
+  private final List<DrawnShape> my_drawn_shapes;
+  private Color my_current_color;
+  private float my_current_thickness;
+  private DrawnShape hover_shape;
+  
+  public DrawingPanel() {
+    this.setBackground(Color.white);
+    my_drawn_shapes = new ArrayList<>();
+  }
+  
+  @Override
+  public void paintComponent(final Graphics the_graphics) {
+    super.paintComponent(the_graphics);
+    final Graphics2D g2d = (Graphics2D) the_graphics;
+    for (DrawnShape s : my_drawn_shapes) {
+      g2d.setColor(s.getColor());
+      g2d.draw(s.getShape());
+    }
+
+    if (hover_shape != null) {
+      g2d.setColor(my_current_color);
+      g2d.draw(hover_shape.getShape());
+    }
+  }
+  
+  /** 
+   * Sets the thickness. 
+   * @param the_thickness The thickness.
+   */
+  public void setThickness(final float the_thickness) {
+    my_current_thickness = the_thickness;
+  }
+  
+  /**
+   * Gets the thickness.
+   * @return The thickness.
+   */
+  public float getThickness() {
+    return my_current_thickness;
+  }
+  
+  /** 
+   * Sets the color.
+   * @param the_color The color.
+   */
+  public void setColor(final Color the_color) {
+    my_current_color = the_color;
+  }
+  
+  /** 
+   * Gets the color.
+   * @return The color.
+   */
+  public Color getColor() {
+    return my_current_color;
+  }
+  
+  /**
+   * Sets a temporary shape, used for the hover effect before mouse release.
+   * @param the_shape The temporary shape to be drawn.
+   */
+  public void setTemp(final DrawnShape the_shape) {
+    hover_shape = the_shape;
+  }
+  
+  /** 
+   * Gets the temporary shape, used for the hover effect before mouse release.
+   * @return The temporary shape.
+   */
+  public DrawnShape getTemp() {
+    return hover_shape;
+  }
+  
+  /**
+   * Adds a shape to the drawn shapes array.
+   * @param the_shape The shape.
+   */
+  public void add(final DrawnShape the_shape) {
+    my_drawn_shapes.add(the_shape);
+  }
+}

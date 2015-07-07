@@ -1,0 +1,36 @@
+package tools;
+
+import gui.DrawnShape;
+import gui.PowerPaintGUI.DrawingPanel;
+
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Line2D;
+
+
+public class Line extends Tool {
+  
+  /**
+   * Gets the end point for the line. 
+   * @param the_event The mouse event.
+   */
+  @Override
+  public void mouseReleased(final MouseEvent the_event) {
+    final Point point2 = the_event.getPoint();
+    final DrawingPanel the_panel = (DrawingPanel) the_event.getSource();
+    the_panel.add(new DrawnShape(new Line2D.Double(getPoint1(), point2), 
+                                 the_panel.getColor(), 
+                                 the_panel.getThickness()));
+    the_panel.repaint();
+  }
+  
+  @Override
+  public void mouseDragged(final MouseEvent the_event) {
+    final DrawingPanel the_panel = (DrawingPanel) the_event.getSource();
+    the_panel.setTemp(new DrawnShape(new Line2D.Double(getPoint1(), 
+                                                  the_event.getPoint()),
+                                                  the_panel.getColor(), 
+                                                  the_panel.getThickness()));
+    the_panel.repaint();
+  }
+}

@@ -1,0 +1,26 @@
+package tools;
+
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.JColorChooser;
+
+public class ColorAction extends AbstractAction {
+  
+  private Color my_color;
+  
+  public ColorAction(final String the_name) {
+    super(the_name);
+    putValue(Action.MNEMONIC_KEY,  KeyEvent.VK_C);
+  }
+  
+  @Override
+  public void actionPerformed(ActionEvent the_event) {
+    Color result = JColorChooser.showDialog(null, "A Color Chooser", null);
+    
+  }
+}

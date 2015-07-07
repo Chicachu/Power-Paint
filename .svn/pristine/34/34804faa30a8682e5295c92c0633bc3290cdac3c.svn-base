@@ -1,0 +1,28 @@
+package draw;
+
+import java.awt.Color;
+import java.awt.Shape;
+
+public class DrawnShape {
+  private Shape my_shape; 
+  private Color my_color;
+  private float my_stroke;
+  
+  public DrawnShape(final Shape the_shape, final Color the_color, final float the_stroke) {
+    my_shape = the_shape; 
+    my_color = the_color; 
+    my_stroke = the_stroke;
+  }
+  
+  public Shape getShape() {
+    return my_shape;
+  }
+  
+  public Color getColor() {
+    return my_color;
+  }
+  
+  public float getStroke() {
+    return my_stroke;
+  }
+}

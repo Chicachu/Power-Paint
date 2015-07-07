@@ -1,0 +1,418 @@
+/*
+ * TCSS 305 - Assignment 5 Part A
+ */
+
+package gui;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
+
+import tools.Tool;
+
+/**
+ * Creates a GUI for PowerPaint that allows the user to draw and create shapes.
+ * 
+ * @author Erica Putsche
+ * @version 05/09/2013
+ */
+@SuppressWarnings("serial")
+public final class PowerPaintGUI extends JFrame {
+  
+  /** The Dimension of the screen. */
+  private static final Dimension SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();
+  
+  /** The width of the screen. */ 
+  private static final int SCREEN_WIDTH = SCREEN_SIZE.width;
+  
+  /** The height of the screen. */ 
+  private static final int SCREEN_HEIGHT = SCREEN_SIZE.height;
+  
+  /** The default width of the drawing panel. */
+  private static final int DEFAULT_WIDTH = 400;
+  
+  /** The default height of the drawing panel. */
+  private static final int DEFAULT_HEIGHT = 300;
+  
+  /**
+   * A constant for the string "Exit".
+   */
+  private static final String EXIT_STRING = "Exit";
+  
+  /**
+   * A constant for the string "Clear".
+   */
+  private static final String CLEAR_STRING = "Clear";
+  
+  /**
+   * A constant for the string "Grid".
+   */
+  private static final String GRID_STRING = "Grid";
+  
+  /**
+   * A constant for the string "Thickness".
+   */
+  private static final String THICK_STRING = "Thickness";
+
+  /**
+   * A constant for the string "Color".
+   */
+  private static final String COLOR_STRING = "Color...";
+ 
+  /**
+   * A constant for the string "About".
+   */
+  private static final String ABOUT_STRING = "About"; 
+  
+  private static final String[] TOOL_NAMES = {"Pencil", "Line", "Ellipse", "Rectangle"};
+  
+  /** The drawing panel. */
+  private DrawingPanel my_drawing_panel;
+  
+  private List<Tool> my_tools;
+  
+  /** 
+   * All the actions.
+   */
+  private Map<String, Action> my_actions;
+  
+  public void start() {
+    setupTools();
+    setupActions();
+    setupComponents();
+  }
+  
+  /**
+   * Sets up the GUI's components.
+   */
+  private void setupComponents() {
+    setTitle("TCSS 305 SnapShop - Spring 2013");
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
+    my_drawing_panel = new DrawingPanel();
+    my_drawing_panel.setBackground(Color.white);
+    my_drawing_panel.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
+
+    setJMenuBar(createMenuBar());
+    final JToolBar tool_bar = createToolBar();
+    
+    add(tool_bar, BorderLayout.SOUTH);
+    add(my_drawing_panel, BorderLayout.CENTER);
+    
+
+    pack();
+    setLocation();
+    setVisible(true); 
+  }
+  
+  /**
+   * Sets up actions.
+   */
+  private void setupActions() {    
+    my_actions = new HashMap<>();
+    
+    // exit action
+    final Action exit_action = new AbstractAction(EXIT_STRING, new ImageIcon("./exit.gif")) {
+      public void actionPerformed(final ActionEvent the_event) {
+        dispose();
+      }
+    };
+    exit_action.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_X);
+    
+    // clear action
+    final Action clear_action = new AbstractAction(CLEAR_STRING) {
+      public void actionPerformed(final ActionEvent the_event) {
+        
+      }
+    };
+    clear_action.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
+    
+    // grid action
+    final Action grid_action = new AbstractAction(GRID_STRING) {
+      public void actionPerformed(final ActionEvent the_event) {
+        
+      }
+    };
+    grid_action.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_G);
+    
+    // thickness action
+    final Action thickness_action = new AbstractAction(THICK_STRING) {
+      public void actionPerformed(final ActionEvent the_event) {
+        
+      }
+    };
+    thickness_action.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_T);
+   
+    // color action
+    final Action color_action = new AbstractAction(COLOR_STRING) {
+      public void actionPerformed(final ActionEvent the_event) {
+        final Color color = JColorChooser.showDialog(null, "A Color Chooser", null);
+        my_drawing_panel.setColor(color);
+        final JComponent source = (JComponent) the_event.getSource();
+        source.setBackground(color);
+      }
+    };
+    color_action.putValue(Action.MNEMONIC_KEY, KeyEvent.VK_C);
+    
+    // about action
+    final Action about_action = new AbstractAction(ABOUT_STRING) {
+      public void actionPerformed(final ActionEvent the_event) {
+        // pop up dialog with a message
+      }
+    };
+    about_action.putValue(Action.MNEMONIC_KEY,  KeyEvent.VK_A);
+    
+    for (Tool t : my_tools) {
+      final String name = t.getClass().getSimpleName();
+      final ImageIcon icon = new ImageIcon("./" + name + ".gif");
+      setupToolAction(name, icon, t);
+    }
+    
+    my_actions.put(EXIT_STRING, exit_action);
+    my_actions.put(CLEAR_STRING, clear_action);
+    my_actions.put(GRID_STRING, grid_action);
+    my_actions.put(THICK_STRING, thickness_action);
+    my_actions.put(COLOR_STRING, color_action);
+    my_actions.put(ABOUT_STRING, about_action);
+    
+  }
+  
+  private void setupTools() {
+    my_tools = new ArrayList<>();
+    my_tools.add(new tools.Pencil());
+    my_tools.add(new tools.Line());
+    my_tools.add(new tools.Ellipse());
+    my_tools.add(new tools.Rectangle());
+  }
+ 
+  private void setupToolAction(final String the_name, final ImageIcon the_icon, 
+                               final Tool the_tool) {
+    
+    final char first_char = the_name.charAt(0);
+    
+    final Action action = new AbstractAction(the_name, the_icon) {
+      public void actionPerformed(final ActionEvent the_event) {
+        my_drawing_panel.addMouseListener(the_tool);
+        my_drawing_panel.addMouseMotionListener(the_tool);
+      }
+    };
+    action.putValue(Action.MNEMONIC_KEY, KeyEvent.getExtendedKeyCodeForChar(first_char));
+    my_actions.put(the_name, action);
+    
+  }
+  
+  /**
+   * Creates a menu bar with menu items.
+   * @return A menu bar with menu items.
+   */
+  private JMenuBar createMenuBar() {
+    final JMenuBar bar = new JMenuBar();
+    
+    // menus (File - clear, exit; Options - grid, thickness; 
+      // Tools - color, pencil, line, rectangle, ellipse; Help - about;)
+    final JMenu file_menu = createFileMenu();
+    final JMenu options_menu = createOptionsMenu();
+    final JMenu tools_menu = createToolsMenu();
+    final JMenu help_menu = createHelpMenu();
+    
+    bar.add(file_menu); 
+    bar.add(options_menu); 
+    bar.add(tools_menu); 
+    bar.add(help_menu); 
+    
+    return bar;
+  }
+  
+  /**
+   * Creates a file menu.
+   * @return The file menu.
+   */
+  private JMenu createFileMenu() {
+    final JMenu file_menu = new JMenu("File");
+    file_menu.setMnemonic(KeyEvent.VK_F);
+    file_menu.add(my_actions.get(CLEAR_STRING));
+    file_menu.add(my_actions.get(EXIT_STRING));
+    
+    return file_menu;
+  }
+  
+  /**
+   * Creates an options menu.
+   * @return The options menu.
+   */
+  private JMenu createOptionsMenu() {
+    final JMenu options_menu = new JMenu("Options"); 
+    options_menu.setMnemonic(KeyEvent.VK_O);
+    final JCheckBox checkbox = new JCheckBox(my_actions.get(GRID_STRING));
+    options_menu.add(checkbox); // grid
+    final JMenu thickness_menu = createThicknessMenu();
+    options_menu.add(thickness_menu);
+    return options_menu;
+  }
+  
+  private JMenu createThicknessMenu() { 
+    // TODO : Make this so that I can create any thickness by changing 1 line of code.
+    final JMenu thickness_menu = new JMenu("Thickness");
+    final ButtonGroup group = new ButtonGroup();
+    final JRadioButton thickness_1 = new JRadioButton("1");
+    thickness_1.setSelected(true);
+    final JRadioButton thickness_2 = new JRadioButton("2");
+    final JRadioButton thickness_4 = new JRadioButton("4");
+    
+    group.add(thickness_1); 
+    group.add(thickness_2);
+    group.add(thickness_4);
+    
+    thickness_menu.add(thickness_1);
+    thickness_menu.add(thickness_2);
+    thickness_menu.add(thickness_4);
+    
+    return thickness_menu;
+  }
+  
+  /**
+   * Creates a tools menu.
+   * @return The tools menu.
+   */
+  private JMenu createToolsMenu() {
+    final JMenu tools_menu = new JMenu("Tools"); 
+    tools_menu.setMnemonic(KeyEvent.VK_T);
+    tools_menu.add(my_actions.get(COLOR_STRING));
+    tools_menu.addSeparator();
+    final ButtonGroup group = new ButtonGroup();
+    for (String s : TOOL_NAMES) {
+      final JRadioButton jbutton = new JRadioButton(my_actions.get(s));
+      if (s.equals("Pencil")) {
+        jbutton.setSelected(true);
+      }
+      group.add(jbutton);
+      tools_menu.add(jbutton);
+    }
+    
+    return tools_menu;
+  }
+   
+  /**
+   * Creates a help menu.
+   * @return The help menu.
+   */
+  private JMenu createHelpMenu() {
+    final JMenu help_menu = new JMenu("Help"); 
+    help_menu.setMnemonic(KeyEvent.VK_H);
+    help_menu.add(my_actions.get(ABOUT_STRING));
+    
+    return help_menu;
+  }
+  
+  /**
+   * Creates a tool bar.
+   * @return The tool bar.
+   */
+  private JToolBar createToolBar() {
+    final JToolBar tool_bar = new JToolBar(); 
+    tool_bar.add(my_actions.get(COLOR_STRING));
+    tool_bar.addSeparator();
+    final ButtonGroup group = new ButtonGroup();
+    for (String s : TOOL_NAMES) {
+      final JToggleButton jbutton = new JToggleButton(my_actions.get(s));
+      if (s.equals("Pencil")) {
+        jbutton.setSelected(true);
+      }
+      group.add(jbutton);
+      tool_bar.add(jbutton);
+    }
+    
+    return tool_bar;
+  }
+  
+  /**
+   * Sets the center of the frame to the center of the screen.
+   */
+  private void setLocation() {
+    setLocation(SCREEN_WIDTH / 2 - getWidth() / 2,
+                SCREEN_HEIGHT / 2 - getHeight() / 2);
+  }
+  
+  public class DrawingPanel extends JPanel {
+    private final List<DrawnShape> my_drawn_shapes;
+    private Tool my_current_tool;
+    private Color my_current_color;
+    private int my_current_thickness;
+    private DrawnShape temp_shape;
+    
+    public DrawingPanel() {
+      this.setBackground(Color.white);
+      my_drawn_shapes = new ArrayList<>();
+    }
+    
+    @Override
+    public void paintComponent(final Graphics the_graphics) {
+      super.paintComponent(the_graphics);
+      final Graphics2D g2d = (Graphics2D) the_graphics;
+      for (DrawnShape s : my_drawn_shapes) {
+        g2d.setColor(s.getColor());
+        g2d.draw(s.getShape());
+      }
+
+      if (temp_shape != null) {
+        g2d.draw(temp_shape.getShape());
+      }
+    }
+    
+    public void setThickness(final int the_thickness) {
+      my_current_thickness = the_thickness;
+    }
+    
+    public int getThickness() {
+      return my_current_thickness;
+    }
+    
+    public void setColor(final Color the_color) {
+      my_current_color = the_color;
+    }
+    
+    public Color getColor() {
+      return my_current_color;
+    }
+    
+    public void setTemp(final DrawnShape the_shape) {
+      temp_shape = the_shape;
+    }
+    
+    public DrawnShape getTemp() {
+      return temp_shape;
+    }
+    
+    public void add(final DrawnShape the_shape) {
+      my_drawn_shapes.add(the_shape);
+    }
+    
+    public void clearPanel() {
+      my_drawn_shapes.clear();
+    }
+  }
+}
